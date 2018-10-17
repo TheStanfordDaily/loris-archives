@@ -36,7 +36,7 @@ module "devise_search_service" {
   ecs_cluster_id     = "${aws_ecs_cluster.cluster.id}"
   vpc_cidr_block     = "${var.vpc_cidr_block}"
   subnets            = "${var.private_subnets}"
-  memory             = "5120"
+  memory             = "7168"
   cpu                = "1024"
   launch_type        = "EC2"
   task_desired_count = 1

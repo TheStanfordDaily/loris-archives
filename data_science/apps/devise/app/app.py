@@ -14,17 +14,20 @@ from utils import search
 app = Flask(__name__)
 api = Api(app)
 cors = CORS(app)
+print('1')
 
 # Load required data
 image_ids = np.load("../data/image_ids.npy")
 index_to_wordvec = np.load("../data/index_to_wordvec.npy")
 word_to_index = pickle.load(open("../data/word_to_index.pkl", "rb"))
+print('2')
 
 # Create sentence embedding model and load its pre-trained weights
 model = SentenceEncoder()
 model.load_state_dict(
-    torch.load("../data/sentence-encoder-2018-10-08.pt", map_location="cpu")
+    torch.load("../data/sentence-encoder-2018-10-16.pt", map_location="cpu")
 )
+print('3')
 
 # Initialise a search index based on the images' devise'd sentence embeddings.
 # See notebooks for a complete explanation of how/why we're searching on these
@@ -32,7 +35,7 @@ model.load_state_dict(
 search_index = nmslib.init(method="hnsw", space="cosinesimil")
 search_index.loadIndex("../data/search_index.hnsw")
 
-
+print('4')
 # Define endpoint classes
 class devise_search(Resource):
     def get(self):
@@ -53,6 +56,7 @@ class devise_search(Resource):
 # Create search endpoint
 api.add_resource(devise_search, "/devise/search")
 
+print('5')
 
 # Routing
 @app.route("/devise")
@@ -63,6 +67,7 @@ def index():
 @app.route("/devise/<path:path>")
 def send_index(path):
     return send_from_directory("static", path)
+print('6')
 
 
 if __name__ == "__main__":

@@ -13,6 +13,7 @@ import org.mockito.Mockito.when
 import org.scalatest.FunSpec
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
+import uk.ac.wellcome.platform.archive.common.fixtures.RandomThings
 import uk.ac.wellcome.platform.archive.common.progress.fixtures.ProgressMonitorFixture
 import uk.ac.wellcome.platform.archive.common.progress.models.{
   Progress,
@@ -32,6 +33,7 @@ class ProgressMonitorTest
     extends FunSpec
     with LocalDynamoDb
     with MockitoSugar
+    with RandomThings
     with ProgressMonitorFixture
     with ScalaFutures {
 
@@ -41,9 +43,14 @@ class ProgressMonitorTest
     it("creates a progress monitor") {
       withSpecifiedLocalDynamoDbTable(createProgressMonitorTable) { table =>
         withProgressMonitor(table) { archiveProgressMonitor =>
-          val id = UUID.randomUUID()
+          val id = randomUUID
           val archiveIngestProgress =
-            Progress(id, uploadUri, Some(callbackUri), Progress.Processing)
+            Progress(
+              id,
+              uploadUri,
+              Some(callbackUri),
+              space,
+              Progress.Processing)
 
           archiveProgressMonitor.create(archiveIngestProgress)
           assertTableOnlyHasItem(archiveIngestProgress, table)
@@ -58,8 +65,8 @@ class ProgressMonitorTest
           val id = UUID.randomUUID()
 
           val monitors = List(
-            Progress(id, uploadUri, Some(callbackUri)),
-            Progress(id, uploadUri, Some(callbackUri))
+            Progress(id, uploadUri, Some(callbackUri), space),
+            Progress(id, uploadUri, Some(callbackUri), space)
           )
 
           val result = Try(monitors.map(archiveProgressMonitor.create))
@@ -87,8 +94,8 @@ class ProgressMonitorTest
           DynamoConfig(table = table.name, index = table.index)
         )
 
-        val id = UUID.randomUUID()
-        val progress = Progress(id, uploadUri, Some(callbackUri))
+        val id = randomUUID
+        val progress = Progress(id, uploadUri, Some(callbackUri), space)
 
         val result = Try(archiveProgressMonitor.create(progress))
         val failedException = result.failed.get
@@ -142,7 +149,7 @@ class ProgressMonitorTest
           DynamoConfig(table = table.name, index = table.index)
         )
 
-        val id = UUID.randomUUID()
+        val id = randomUUID
         val result = Try(archiveProgressMonitor.get(id))
         val failedException = result.failed.get
 

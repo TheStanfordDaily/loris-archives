@@ -9,8 +9,10 @@ import akka.stream.ActorMaterializer
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.{FunSpec, Matchers}
 import uk.ac.wellcome.monitoring.fixtures.MetricsSenderFixture
+import uk.ac.wellcome.platform.archive.common.fixtures.RandomThings
 import uk.ac.wellcome.platform.archive.common.models.DisplayIngest
 import uk.ac.wellcome.platform.archive.common.progress.fixtures.ProgressMonitorFixture
+import uk.ac.wellcome.platform.archive.common.progress.models.progress.Namespace
 import uk.ac.wellcome.platform.archive.common.progress.models.{
   Progress,
   ProgressCreateRequest
@@ -24,12 +26,13 @@ class ProgressHttpFeatureTest
     with MetricsSenderFixture
     with ProgressMonitorFixture
     with ProgressHttpFixture
+    with RandomThings
     with IntegrationPatience {
 
   import HttpMethods._
   import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
-  import Progress._
   import uk.ac.wellcome.json.JsonUtil._
+  import Progress._
 
   describe("GET /progress/:id") {
     it("returns a progress monitor when available") {
@@ -65,7 +68,7 @@ class ProgressHttpFeatureTest
           withActorSystem { actorSystem =>
             implicit val system = actorSystem
 
-            val uuid = UUID.randomUUID().toString
+            val uuid = randomUUID
 
             val request = Http().singleRequest(
               HttpRequest(GET, s"$baseUrl/progress/$uuid")
@@ -91,10 +94,12 @@ class ProgressHttpFeatureTest
               implicit val mat = materializer
 
               val url = s"$baseUrl/progress"
+              val space = Namespace("space-id")
 
               val createProgressRequest = ProgressCreateRequest(
                 uploadUri,
-                Some(callbackUri)
+                Some(callbackUri),
+                space
               )
 
               val entity = HttpEntity(
@@ -136,7 +141,8 @@ class ProgressHttpFeatureTest
                   val expectedProgress = Progress(
                     id,
                     uploadUri,
-                    Some(callbackUri)
+                    Some(callbackUri),
+                    space
                   ).copy(
                     createdDate = progress.createdDate,
                     lastModifiedDate = progress.lastModifiedDate)
