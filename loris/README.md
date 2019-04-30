@@ -53,5 +53,13 @@ curl \
     --user-agent ELB-HealthChecker/2.0 \
     --verbose \
     --output default.jpg \
-    http://localhost:9000/image/V0017087.jpg/full/300,/0/default.jpg
+    http://localhost:8888/s3:data.2012-aug/data/stanford/1920/10/01_01/Stanford_Daily-IMG/Stanford_Daily_19201001_0001_0001.jp2/full/300,/0/default.jpg
 ```
+
+http://localhost:8888/s3:data.2012-aug/data/stanford/1920/10/01_01/Stanford_Daily-IMG/Stanford_Daily_19201001_0001_0001.jp2/full/300,/0/default.jpg
+
+vim /usr/local/lib/python3.5/dist-packages/Loris-2.3.3-py3.5.egg/loris/img_info.py
+# line 123
+
+
+/usr/bin/uwsgi --ini /etc/uwsgi/uwsgi.ini

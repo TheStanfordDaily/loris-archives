@@ -34,6 +34,10 @@ COPY loris2.conf /opt/loris/etc/loris2.conf
 COPY loris2.wsgi /var/www/loris2/loris2.wsgi
 COPY uwsgi.ini /etc/uwsgi
 
+COPY kakadu /opt/kakadu
+
+# RUN apt-get install -y vim
+
 COPY wellcome_loris.py /usr/local/lib/python3.5/dist-packages
 
 EXPOSE 8888

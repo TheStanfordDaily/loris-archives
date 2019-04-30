@@ -21,6 +21,8 @@ pip3 install -r /requirements.txt
 
 echo "*** Installing Loris itself"
 cd "loris-$LORIS_COMMIT"
-python3 setup.py install
+python3 setup.py install --kdu-expand=/opt/kakadu/kdu_expand --libkdu /opt/kakadu
 
 apt-get clean
+
+touch /var/www/loris2/icons/loris-icon.png
