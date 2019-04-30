@@ -169,6 +169,7 @@ __pycache__/
 
 # C extensions
 *.so
+!libkdu*.so
 
 # Distribution / packaging
 .Python
